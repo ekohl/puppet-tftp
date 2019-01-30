@@ -6,11 +6,23 @@ class tftp::config {
   }
 
   if $tftp::daemon {
-    if $facts['os']['family'] =~ /^(FreeBSD|DragonFly)$/ {
-      augeas { 'set root directory':
-        context => '/files/etc/rc.conf',
-        changes => "set tftpd_flags '\"-s ${tftp::root}\"'",
+    case $facts['os']['family'] {
+      /^(FreeBSD|DragonFly)$/: {
+        augeas { 'set root directory':
+          context => '/files/etc/rc.conf',
+          changes => "set tftpd_flags '\"-s ${tftp::root}\"'",
+        }
       }
+      'Debian': {
+        file { '/etc/default/tftpd-hpa':
+          ensure  => file,
+          owner   => 'root',
+          group   => 'root',
+          mode    => '0644',
+          content => template('tftp/tftpd-hpa.erb'),
+        }
+      }
+      default: {}
     }
   } else {
     include xinetd
