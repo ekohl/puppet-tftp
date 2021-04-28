@@ -28,7 +28,9 @@ class tftp::config {
     include xinetd
 
     xinetd::service { 'tftp':
-      port        => '69',
+      user        => $tftp::username,
+      bind        => $tftp::address,
+      port        => $tftp::port,
       server      => '/usr/sbin/in.tftpd',
       server_args => "-v -s ${tftp::root} -m /etc/tftpd.map",
       socket_type => 'dgram',
