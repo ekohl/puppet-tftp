@@ -22,6 +22,12 @@ class tftp::config {
           content => template('tftp/tftpd-hpa.erb'),
         }
       }
+      'RedHat': {
+        systemd::dropin_file { 'root-directory':
+          unit    => 'tftp.service',
+          content => epp('tftp/tftp.service-override.epp'),
+        }
+      }
       default: {}
     }
   } else {

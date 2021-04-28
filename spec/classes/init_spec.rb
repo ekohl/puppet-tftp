@@ -77,6 +77,11 @@ describe 'tftp' do
               .with_alias('tftpd')
               .that_subscribes_to('Class[Tftp::Config]')
           end
+
+          it 'should contain the service override' do
+            should contain_systemd__dropin_file('root-directory')
+              .with_content(%r{^ExecStart=/usr/sbin/in\.tftp -s /var/lib/tftpboot$})
+          end
         end
       when 'FreeBSD'
         it 'should not configure xinetd' do
